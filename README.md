@@ -16,7 +16,7 @@ To test the bug, do the follwing:
    
 2. note the field `length` above the table, should be `40`
    
-3. insert `Mono` on the input field under the `Name` column. Note the
+3. insert `Mono` in the input field under the `Name` column. Note the
    `length` field again: nothing happened, that's the bug. also note
    the URL that now should be `/listing/accommodation`;
    
