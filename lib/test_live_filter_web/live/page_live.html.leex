@@ -1,0 +1,110 @@
+<section class="row">
+  <%= live_patch to: Routes.page_path(@socket, :index),
+  class: "button" do %>Main<% end %>
+  <%= live_patch to: Routes.page_path(@socket, :index, "accommodation"),
+  class: "button" do %>Listing<% end %>
+</section>
+
+<div class="<%= if @list_name == nil, do: "visible", else: "hidden" %>">
+  <section class="phx-hero">
+    <h1>Welcome to Phoenix!</h1>
+    <p>Peace-of-mind from prototype to production</p>
+
+    <form phx-change="suggest" phx-submit="search">
+      <input type="text" name="q" value="<%= @query %>" placeholder="Live dependency search" list="results" autocomplete="off"/>
+      <datalist id="results">
+        <%= for {app, _vsn} <- @results do %>
+          <option value="<%= app %>"><%= app %></option>
+        <% end %>
+      </datalist>
+      <button type="submit" phx-disable-with="Searching...">Go to Hexdocs</button>
+    </form>
+  </section>
+
+  <section class="row">
+    <article class="column">
+      <h2>Resources</h2>
+      <ul>
+        <li>
+          <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
+        </li>
+        <li>
+          <a href="https://github.com/phoenixframework/phoenix">Source</a>
+        </li>
+        <li>
+          <a href="https://github.com/phoenixframework/phoenix/blob/v1.5/CHANGELOG.md">v1.5 Changelog</a>
+        </li>
+      </ul>
+    </article>
+    <article class="column">
+      <h2>Help</h2>
+      <ul>
+        <li>
+          <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
+        </li>
+        <li>
+          <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
+        </li>
+        <li>
+          <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
+        </li>
+        <li>
+          <a href="https://elixir-slackin.herokuapp.com/">Elixir on Slack</a>
+        </li>
+      </ul>
+    </article>
+  </section>
+</div>
+<%= if @list_name != nil do %>
+  <div>Length is: <%= length(@data) %></div>
+  <table>
+    <thead>
+      <tr>
+        <%= for {fname, fdata} <- @fields_spec do %>
+          <%= if fdata[:visible] do %>
+            <% label = fdata[:label] || "#{fname}" %>
+            <th class="uppercase"><%= label %></th>
+          <% end %>
+        <% end %>
+      </tr>
+      <tr class="search"><form phx-change="list_filter">
+        <%= for {fname, fdata} <- @fields_spec do %>
+          <%= if fdata[:visible] do %>
+            <%= if fdata[:type] == :string do %>
+              <th>
+                <div class="input-control">
+                  <% curr_value = Keyword.get(@params, fname, "") %>
+                  <%= text_input :search, fname,
+                  phx_debounce: "300",
+                  value: curr_value %>
+                </div>
+              </th>
+            <% else %>
+              <th></th>
+            <% end %>
+          <% end %>
+        <% end %>
+      </form></tr>
+    </thead>
+    <tbody>
+      <%= for rec <- @data do %>
+        <tr>
+          <%= for {fname, fdata} <- @fields_spec do %>
+            <%= if fdata[:visible] != false do %>
+              <% fvalue = Map.get(rec, fname) %>
+              <%= case fdata[:type] do %>
+                <% :boolean -> %>
+                  <td>
+                    <%= if fvalue do %>yes<% end %>
+                  </td>
+                <% :string -> %>
+                  <td><p class="u-text-left"><%= fvalue %></p></td>
+                <% _  -> %><td class=""><p><%= fvalue %></p></td>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
