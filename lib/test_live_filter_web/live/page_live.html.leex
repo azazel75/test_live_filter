@@ -57,6 +57,7 @@
 </div>
 <%= if @list_name != nil do %>
   <div>Length is: <%= length(@data) %></div>
+  <form id="list_filter" phx-change="list_filter"></form>
   <table>
     <thead>
       <tr>
@@ -67,7 +68,7 @@
           <% end %>
         <% end %>
       </tr>
-      <tr class="search"><form phx-change="list_filter">
+      <tr class="search">
         <%= for {fname, fdata} <- @fields_spec do %>
           <%= if fdata[:visible] do %>
             <%= if fdata[:type] == :string do %>
@@ -76,7 +77,8 @@
                   <% curr_value = Keyword.get(@params, fname, "") %>
                   <%= text_input :search, fname,
                   phx_debounce: "300",
-                  value: curr_value %>
+                  value: curr_value,
+                  form: "list_filter" %>
                 </div>
               </th>
             <% else %>
@@ -84,7 +86,7 @@
             <% end %>
           <% end %>
         <% end %>
-      </form></tr>
+      </tr>
     </thead>
     <tbody>
       <%= for rec <- @data do %>
